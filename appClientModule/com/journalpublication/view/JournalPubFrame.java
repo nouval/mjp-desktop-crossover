@@ -9,6 +9,7 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 
+import com.journalpublication.ApplicationListener;
 import com.journalpublication.model.Journal;
 
 public class JournalPubFrame extends JFrame {
@@ -23,14 +24,18 @@ public class JournalPubFrame extends JFrame {
 	private JScrollPane jScrollPane;
 	
 	private DefaultListModel<Journal> listModel;
+	
+	private ApplicationListener listener;
 
-	public JournalPubFrame() {
-		this("Journal Publication");
+	public JournalPubFrame(ApplicationListener listener) {
+		this("Journal Publication", listener);
 	}
 
-	public JournalPubFrame(String title) {
+	public JournalPubFrame(String title, ApplicationListener listener) {
 		super(title);
 
+		this.listener = listener;
+		
 		initComponents();
 	}
 
@@ -44,23 +49,18 @@ public class JournalPubFrame extends JFrame {
     	this.jList = new JList<Journal>(this.listModel);
     	this.jList.setSelectedIndex(0);
     	this.jList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    	this.jList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-			public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-				javax.swing.JOptionPane.showMessageDialog(null, "My Goodness, this is so concise");
-			}
-		});
-		
+
     	this.btnView = new JButton("View");
 		btnView.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	javax.swing.JOptionPane.showMessageDialog(null, "viewing pdf file");
+            	onViewBtnClicked(evt);
             }
         });
 		
 		this.btnclose = new JButton("Close");
 		btnclose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	closeBtnActionPerformed(evt);
+            	onCloseBtnClicked(evt);
             }
         });
 		
@@ -95,15 +95,22 @@ public class JournalPubFrame extends JFrame {
         this.pack();
 	}
 	
-    private void closeBtnActionPerformed(java.awt.event.ActionEvent evt) {
-        this.exit();
+    private void onCloseBtnClicked(java.awt.event.ActionEvent evt) {
+    	this.listener.onApplicationExit();
     }
     
-    public void exit() {
+    private void onViewBtnClicked(java.awt.event.ActionEvent evt) {
+    	if (this.listener != null) {
+        	Journal journal = this.jList.getSelectedValue();
+        	this.listener.onJournalSelected(journal);
+    	}
+    }
+
+    public void close() {
     	// exit application
     	dispose();
     }
-    
+
     public void reloadJournalList(ArrayList<Journal> journals) {
     	
     	this.listModel.clear();
@@ -113,5 +120,9 @@ public class JournalPubFrame extends JFrame {
         		this.listModel.addElement(journal);
         	}    		
     	}    	
+    }
+    
+    public void showMessage(String message) {
+    	javax.swing.JOptionPane.showMessageDialog(null, message);
     }
 }

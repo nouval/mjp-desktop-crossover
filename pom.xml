@@ -58,5 +58,10 @@
   		<artifactId>jjwt</artifactId>
   		<version>0.4</version>
   	</dependency>
+  	<dependency>
+  		<groupId>org.swinglabs</groupId>
+  		<artifactId>pdf-renderer</artifactId>
+  		<version>1.0.5</version>
+  	</dependency>
   </dependencies>
 </project>

@@ -16,7 +16,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import com.journalpublication.AuthenticationListener;
+import com.journalpublication.ApplicationListener;
 
 public class LoginDialog extends JDialog {
 	/**
@@ -31,9 +31,9 @@ public class LoginDialog extends JDialog {
     private JButton btnCancel;
     private boolean succeeded;
     
-    private AuthenticationListener listener;
+    private ApplicationListener listener;
 
-    public LoginDialog(JournalPubFrame parent, AuthenticationListener listener) {
+    public LoginDialog(JournalPubFrame parent, ApplicationListener listener) {
         super(parent, "Login", true);
         
         this.listener = listener;
@@ -111,14 +111,14 @@ public class LoginDialog extends JDialog {
     
     private void onLoginBtnClicked() {
     	if (this.listener != null) {
-    		this.listener.onUsernameAndPasswordEntered(this, getUsername(), getPassword());
+    		this.listener.onAuthenticationIsRequired(this, getUsername(), getPassword());
     	}
     }
 
     private void onCancelBtnClicked() {
     	
     	dispose();
-    	((JournalPubFrame)this.getParent()).exit();
+    	this.listener.onApplicationExit();
     }
     
     public void close() {

@@ -1,8 +1,12 @@
 package com.journalpublication.service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -18,13 +22,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.journalpublication.AppConfig;
 import com.journalpublication.model.Credential;
 import com.journalpublication.model.Journal;
+import com.journalpublication.view.JournalReaderFrame;
 
 public class JournalPubServiceImpl implements JournalPubService {
 
-	final private Credential creds;
+	private Credential creds;
 	
 	public JournalPubServiceImpl() {
-		
+
 		this.creds = new Credential();
 	}
 
@@ -40,10 +45,8 @@ public class JournalPubServiceImpl implements JournalPubService {
 			get.setHeader("X-AUTH-TOKEN", this.creds.getToken());
 
 			HttpResponse response = client.execute(get);
-			System.out.println("Response Code : " 
-	                + response.getStatusLine().getStatusCode());
 
-			if (response.getStatusLine().getStatusCode() == 200) {				
+			if (response.getStatusLine().getStatusCode() == 200) {
 				isTokenStillValid = true;
 			}
 		} catch (HttpHostConnectException hhcEx) {
@@ -109,13 +112,13 @@ public class JournalPubServiceImpl implements JournalPubService {
 			get.setHeader("X-AUTH-TOKEN", this.creds.getToken());
 
 			HttpResponse response = client.execute(get);
-			System.out.println("Response Code : " 
-	                + response.getStatusLine().getStatusCode());
 			
 			if (response.getStatusLine().getStatusCode() == 200) {
 				ObjectMapper mapper = new ObjectMapper();
 				journals = mapper.readValue(response.getEntity().getContent(), mapper.getTypeFactory().constructCollectionType(
 	                    List.class, Journal.class));
+				
+				AppConfig.getInstance().setListOfSubscribedJournals(journals);
 			}
 		} catch (HttpHostConnectException hhcEx) {
 			
@@ -130,9 +133,58 @@ public class JournalPubServiceImpl implements JournalPubService {
 	}
 
 	@Override
-	public void viewJournal(Journal journal) {
-		// TODO Auto-generated method stub
+	public void viewJournal(final Journal journal) {
 		
+		// open offline file, if not exists fetch one from api
+		File file = new File(journal.getFilename());
+		
+		// fetch from api, if unavailable offline
+		if (!file.exists()) {
+
+			try {
+				String apiUrl = AppConfig.getInstance().getApiUrl() + "/api/journal/" + journal.getId();
+				HttpClient client = HttpClientBuilder.create().build();
+				HttpGet get = new HttpGet(apiUrl);
+
+				get.setHeader("X-AUTH-TOKEN", this.creds.getToken());
+
+				HttpResponse response = client.execute(get);
+
+				if (response.getStatusLine().getStatusCode() == 200) {
+					ObjectMapper mapper = new ObjectMapper();
+					Journal journalRemote = mapper.readValue(response.getEntity().getContent(), Journal.class);
+
+					FileOutputStream fos = new FileOutputStream(file);
+					fos.write(journalRemote.getContent());
+					fos.flush();
+					fos.close();					
+				}
+			} catch (HttpHostConnectException hhcEx) {
+				
+				// warns user offline mode
+				file = null;
+				
+			} catch (IOException ioEx) {
+
+				// ioEx.printStackTrace();
+				file = null;
+			}
+		}
+		
+		if (file != null) {
+			try {
+				
+				new JournalReaderFrame(journal.getFilename(), ImageIO.read(new File(file.getName())));
+
+			} catch (IOException ex) {
+				System.out.println("Error: " + ex.getMessage());
+
+				ex.printStackTrace();
+			} catch (Exception ex) {
+				
+				ex.printStackTrace();
+			}
+		}
 	}
 
 	@Override

@@ -7,7 +7,7 @@ public class Journal {
 	private String id;
 	private String tags;
 //	private String version;
-//	private String content;
+	private byte[] content;
 //	private String userId;
 
 	public void setSubject(String subject) {
@@ -40,6 +40,14 @@ public class Journal {
 	
 	public String getTags() {
 		return this.tags;
+	}
+	
+	public byte[] getContent() {
+		return this.content;
+	}
+	
+	public void setContent(byte[] content) {
+		this.content = content;
 	}
 	
 	@Override
