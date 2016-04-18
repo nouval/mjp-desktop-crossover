@@ -186,10 +186,4 @@ public class JournalPubServiceImpl implements JournalPubService {
 			}
 		}
 	}
-
-	@Override
-	public void fetchSubscribeJournal(Journal journal) {
-		// TODO Auto-generated method stub
-		
-	}
 }

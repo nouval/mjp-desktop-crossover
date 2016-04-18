@@ -1,14 +1,17 @@
 package com.journalpublication.model;
 
+/**
+ * POJO holds journal detail
+ * @author nouval
+ *
+ */
 public class Journal {
 
 	private String subject;
 	private String filename;
 	private String id;
 	private String tags;
-//	private String version;
 	private byte[] content;
-//	private String userId;
 
 	public void setSubject(String subject) {
 		this.subject = subject;

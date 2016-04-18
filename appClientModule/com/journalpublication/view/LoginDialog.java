@@ -18,6 +18,11 @@ import javax.swing.border.LineBorder;
 
 import com.journalpublication.ApplicationListener;
 
+/**
+ * Login dialog, for authentication
+ * @author nouval
+ *
+ */
 public class LoginDialog extends JDialog {
 	/**
 	 * 

@@ -12,6 +12,11 @@ import javax.swing.ListSelectionModel;
 import com.journalpublication.ApplicationListener;
 import com.journalpublication.model.Journal;
 
+/**
+ * Main frame for MJP desktop app
+ * @author nouval
+ *
+ */
 public class JournalPubFrame extends JFrame {
 
 	/**

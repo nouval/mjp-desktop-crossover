@@ -6,6 +6,11 @@ import com.journalpublication.service.JournalPubService;
 import com.journalpublication.view.JournalPubFrame;
 import com.journalpublication.view.LoginDialog;
 
+/**
+ * Main application shell, controlling event and flows.
+ * @author nouval
+ *
+ */
 public class JournalPubViewMain implements ApplicationListener {
 	
 	private JournalPubFrame frame;
@@ -44,9 +49,7 @@ public class JournalPubViewMain implements ApplicationListener {
 	@Override
 	public void onJournalSelected(Journal journal) {
 		
-		this.service.viewJournal(journal);
-
-//		this.frame.showMessage("Journal '" + journal.getSubject() + "' [" + journal.getFilename() + "] is selected");		
+		this.service.viewJournal(journal);		
 	}
 
 	@Override

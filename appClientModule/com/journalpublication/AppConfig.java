@@ -10,6 +10,11 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.journalpublication.model.Journal;
 
+/**
+ * MJP desktop app configuration class
+ * @author nouval
+ *
+ */
 public class AppConfig {
 	
 	private PropertiesConfiguration config = null;
